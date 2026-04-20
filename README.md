@@ -68,5 +68,10 @@ Cara kerjanya adalah `ThreadPool` membuat sejumlah `Worker` yang masing-masing p
 
 <details>
 <summary><b>Bonus</b></summary>
-... isi
+
+
+Saya menambahkan function `build` sebagai alternatif dari function `new` untuk membuat `ThreadPool`. Perbedaannya adalah di cara menangani error ketika `size` yang diberikan adalah 0. Function `new` menggunakan `assert!` yang akan langsung membuat program berhenti waktu `size` bernilai 0, sedangkan function `build` mengembalikan `Result` sehingga error bisa ditangani dengan lebih baik tanpa harus membuat program langsung berhenti.
+
+Menurut saya, function `build` lebih baik dibandingkan `new` untuk digunakan di aplikasi production. Karena, dengan mengembalikan `Result`, pemanggil function bisa memutuskan sendiri dulu apa yang harus dilakukan saat terjadi error, misalnya adalah menampilkan pesan error yang informatif kemudian berhenti dengan normal, daripada program tiba-tiba crash dengan pesan yang tidak jelas. 
+
 </details>
