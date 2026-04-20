@@ -54,6 +54,12 @@ Saya mencoba simulasi slow response dengan menambahkan endpoint `/sleep` yang me
 <summary><b>Milestone 5: Multithreaded server</b></summary>
 
 
+`http://127.0.0.1:7878`:
+![Commit 5.1 screen capture](/assets/images/Milestone5_1.png)
+
+`http://127.0.0.1:7878/sleep`:
+![Commit 5.2 screen capture](/assets/images/Milestone5_2.png)
+
 Saya mengimplementasikan `ThreadPool` supaya server dapat menangani banyak request secara bersamaan. Sebelumnya, server hanya bisa memproses satu request dalam satu waktu, jadinya request yang lain harus mengantri dan menunggu. Sekarang, dengan `ThreadPool` yang berisi 4 worker thread, server bisa memproses hingga 4 request secara bersamaan.
 
 Cara kerjanya adalah `ThreadPool` membuat sejumlah `Worker` yang masing-masing punya thread sendiri-sendiri. Ketika ada request yang masuk, `ThreadPool` akan mengirim job ke channel menggunakan `sender`, lalu salah satu `Worker` yang sedang tidak sibuk akan mengambil job tersebut dari channel dan memprosesnya. Supaya channelnya bisa diakses oleh banyak worker sekaligus, receivernya dibungkus dengan `Arc<Mutex<>>` supaya bisa dishare ke banyak thread dan `Mutex` supaya hanya satu worker yang dapat mengakses channel dalam satu waktu.
