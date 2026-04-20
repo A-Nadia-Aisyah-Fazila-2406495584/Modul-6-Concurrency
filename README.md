@@ -40,10 +40,10 @@ Refactoring dilakukan supaya kode jadi lebih rapi. Bagian yang berbeda antara re
 <summary><b>Milestone 4: Simulation slow response</b></summary>
 
 
-http://127.0.0.1:7878:
+`http://127.0.0.1:7878`:
 ![Commit 4.1 screen capture](/assets/images/Milestone4_1.png)
 
-http://127.0.0.1:7878/sleep:
+`http://127.0.0.1:7878/sleep`:
 ![Commit 4.2 screen capture](/assets/images/Milestone4_2.png)
 
 Saya mencoba simulasi slow response dengan menambahkan endpoint `/sleep` yang membuat server tidur selama sepuluh detik sebelum mengirim respons. Ketika saya membuka dua tab at the same time di browser. Dimana, yang satu mengakses endpoint `http://127.0.0.1:7878` dan yang satu lagi mengakses `http://127.0.0.1:7878/sleep`. Tab kedua harus menunggu tab pertama selesai dulu baru bisa load. Ini terjadi karena servernya masih single threaded (server hanya bisa menangani satu request dalam satu waktu). Jadi, selama server sedang memproses request `/sleep`, semua request yang lain harus antri dan menunggu. Ini akan jadi masalah besar kalau servernya akan diakses oleh banyak user at the same time, karena semua user jadi harus mengantri meskipun request mereka tidak ada hubungannya satu sama lain.
@@ -52,7 +52,12 @@ Saya mencoba simulasi slow response dengan menambahkan endpoint `/sleep` yang me
 
 <details>
 <summary><b>Milestone 5: Multithreaded server</b></summary>
-... isi
+
+
+Saya mengimplementasikan `ThreadPool` supaya server dapat menangani banyak request secara bersamaan. Sebelumnya, server hanya bisa memproses satu request dalam satu waktu, jadinya request yang lain harus mengantri dan menunggu. Sekarang, dengan `ThreadPool` yang berisi 4 worker thread, server bisa memproses hingga 4 request secara bersamaan.
+
+Cara kerjanya adalah `ThreadPool` membuat sejumlah `Worker` yang masing-masing punya thread sendiri-sendiri. Ketika ada request yang masuk, `ThreadPool` akan mengirim job ke channel menggunakan `sender`, lalu salah satu `Worker` yang sedang tidak sibuk akan mengambil job tersebut dari channel dan memprosesnya. Supaya channelnya bisa diakses oleh banyak worker sekaligus, receivernya dibungkus dengan `Arc<Mutex<>>` supaya bisa dishare ke banyak thread dan `Mutex` supaya hanya satu worker yang dapat mengakses channel dalam satu waktu.
+
 </details>
 
 <details>
