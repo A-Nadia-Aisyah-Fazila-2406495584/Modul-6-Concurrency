@@ -28,17 +28,26 @@ Saya melakukan modifikasi method `handle_connection` supaya server bisa mengirim
 <summary><b>Milestone 3: Validating request and selectively responding</b></summary>
 
 
-![Commit 2 screen capture](/assets/images/Milestone3.png)
+![Commit 3 screen capture](/assets/images/Milestone3.png)
 
-Di milestone ini, server sudah bisa membedakan request yang masuk dan memberikan respons yang sesuai. Sebelumnya, server selalu mengembalikan `hello.html` apapun yang diminta oleh browser. Sekarang, server cek dulu request linenya. Jika requestnya `GET / HTTP/1.1` maka server akan mengembalikan `hello.html` dengan status `200 OK`. Selain dari itu, server akan mengembalikan `404.html` dengan status `404 NOT FOUND`.
+Server sudah bisa membedakan request yang masuk dan memberikan respons yang sesuai. Sebelumnya, server selalu mengembalikan `hello.html` apapun yang diminta oleh browser. Sekarang, server cek dulu request linenya. Jika requestnya `GET / HTTP/1.1` maka server akan mengembalikan `hello.html` dengan status `200 OK`. Selain dari itu, server akan mengembalikan `404.html` dengan status `404 NOT FOUND`.
 
-Refactoring juga dilakukan supaya kode jadi lebih rapi. Bagian yang berbeda antara response sukses dan gagal hanya di `status_line` dan `filename`nya saja, sedangkan proses membaca file dan menyusun responsenya tetap sama. Jadi instead of tulis logika yang sama dua kali, saya pisahkan dulu nilai `status_line` dan `filename`nya menggunakan `if else`, baru setelah itu diproses bersama supaya kode lebih mudah untuk dibaca dan dimaintain.
+Refactoring dilakukan supaya kode jadi lebih rapi. Bagian yang berbeda antara response sukses dan gagal hanya di `status_line` dan `filename`nya saja, sedangkan proses membaca file dan menyusun responsenya tetap sama. Jadi instead of tulis logika yang sama dua kali, saya pisahkan dulu nilai `status_line` dan `filename`nya menggunakan `if else`, baru setelah itu diproses bersama supaya kode lebih mudah untuk dibaca dan dimaintain.
 
 </details>
 
 <details>
 <summary><b>Milestone 4: Simulation slow response</b></summary>
-... isi
+
+
+http://127.0.0.1:7878:
+![Commit 4.1 screen capture](/assets/images/Milestone4_1.png)
+
+http://127.0.0.1:7878/sleep:
+![Commit 4.2 screen capture](/assets/images/Milestone4_2.png)
+
+Saya mencoba simulasi slow response dengan menambahkan endpoint `/sleep` yang membuat server tidur selama sepuluh detik sebelum mengirim respons. Ketika saya membuka dua tab at the same time di browser. Dimana, yang satu mengakses endpoint `http://127.0.0.1:7878` dan yang satu lagi mengakses `http://127.0.0.1:7878/sleep`. Tab kedua harus menunggu tab pertama selesai dulu baru bisa load. Ini terjadi karena servernya masih single threaded (server hanya bisa menangani satu request dalam satu waktu). Jadi, selama server sedang memproses request `/sleep`, semua request yang lain harus antri dan menunggu. Ini akan jadi masalah besar kalau servernya akan diakses oleh banyak user at the same time, karena semua user jadi harus mengantri meskipun request mereka tidak ada hubungannya satu sama lain.
+
 </details>
 
 <details>
